@@ -11,7 +11,7 @@ app.use(cookieParser());
 const keycloakBaseUrl = 'http://localhost:8080'
 const realm = 'amazing';
 const clientId = 'frontend';
-const clientSecret = 'NCYONAAI1DlubqctRPaLDoIRcsExPyJD'; // Если используется конфиденциальный клиент
+const clientSecret = 'WMzFz0G01LEVWMR3liZHMInR71sw9hcF'; // Если используется конфиденциальный клиент
 const redirectUri = 'http://localhost:3000/callback';
 
 // Middleware для проверки аутентификации
@@ -29,7 +29,7 @@ async function isTokenValid(token) {
             client_id: clientId,
             client_secret: clientSecret,
         };
-
+debugger
         const response = await axios.post(tokenIntrospectionUrl, qs.stringify(data), {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -48,13 +48,13 @@ app.get('/', async (req, res) => {
     const token = req.cookies['access_token'] || req.headers['authorization'];
     if (token && await isTokenValid(token)) {
         // Если токен валидный, отдаем welcome.html
-        res.sendFile(path.join(__dirname, 'public', 'welcome.html'));
+        res.sendFile(path.join(__dirname, 'public', 'build/index.html'));
     } else {
         // Если токена нет или он не валидный, отдаем index.html с кнопкой Login
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     }
 });
-
+app.use(express.static(path.join(__dirname, 'public/build')));
 // Маршрут для редиректа на Keycloak
 app.get('/login', (req, res) => {
     const keycloakAuthUrl = `${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid`;
