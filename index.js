@@ -2,17 +2,21 @@ const express = require('express');
 const axios = require('axios');
 const qs = require('qs'); // Для форматирования данных в формате application/x-www-form-urlencoded
 const path = require('path');
+const fs = require('fs');
 const app = express();
+//var cors = require('cors');
 const cookieParser = require('cookie-parser');
+const https = require('https');
 app.use(cookieParser());
+//app.use(cors());
 
 
 // Параметры для подключения к Keycloak
-const keycloakBaseUrl = 'http://localhost:8080'
+const keycloakBaseUrl = 'http://84.201.154.38:8080'
 const realm = 'amazing';
 const clientId = 'frontend';
 const clientSecret = 'WMzFz0G01LEVWMR3liZHMInR71sw9hcF'; // Если используется конфиденциальный клиент
-const redirectUri = 'http://localhost:3000/callback';
+const redirectUri = 'http://84.201.154.38:3000/callback';
 
 // Middleware для проверки аутентификации
 function isAuthenticated(req) {
@@ -48,13 +52,13 @@ app.get('/', async (req, res) => {
     const token = req.cookies['access_token'] || req.headers['authorization'];
     if (token && await isTokenValid(token)) {
         // Если токен валидный, отдаем welcome.html
-        res.sendFile(path.join(__dirname, 'public', 'build/index.html'));
+        res.sendFile(path.join(__dirname, 'public', 'welcome.html'));
     } else {
         // Если токена нет или он не валидный, отдаем index.html с кнопкой Login
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     }
 });
-app.use(express.static(path.join(__dirname, 'public/build')));
+//app.use(express.static(path.join(__dirname, 'public/build')));
 // Маршрут для редиректа на Keycloak
 app.get('/login', (req, res) => {
     const keycloakAuthUrl = `${keycloakBaseUrl}/realms/${realm}/protocol/openid-connect/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid`;
@@ -102,6 +106,14 @@ app.get('/callback', async (req, res) => {
     }
 });
 
+//https
+//    .createServer(
+//        {
+//            key: fs.readFileSync('../server.key.pem'),
+//            cert: fs.readFileSync('../server.crt.pem'),
+//        },
+//        app
+//    )
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
 });
