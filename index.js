@@ -12,11 +12,11 @@ app.use(cookieParser());
 
 
 // Параметры для подключения к Keycloak
-const keycloakBaseUrl = 'http://84.201.154.38:8080'
+const keycloakBaseUrl = 'http:/130.193.54.37:8080'
 const realm = 'amazing';
 const clientId = 'frontend';
 const clientSecret = 'WMzFz0G01LEVWMR3liZHMInR71sw9hcF'; // Если используется конфиденциальный клиент
-const redirectUri = 'http://84.201.154.38:3000/callback';
+const redirectUri = 'http://130.193.54.37:80/callback';
 
 // Middleware для проверки аутентификации
 function isAuthenticated(req) {
@@ -114,6 +114,6 @@ app.get('/callback', async (req, res) => {
 //        },
 //        app
 //    )
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+app.listen(80, () => {
+    console.log('Server is running on http://localhost:80');
 });
